@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kite AI Quiz</title>
+<style>
+body { margin:0; font-family:'Segoe UI', sans-serif; background:linear-gradient(135deg,#667eea,#764ba2); color:#fff; display:flex; justify-content:center; align-items:center; min-height:100vh;}
+.container { background: rgba(255,255,255,0.95); color:#333; padding: 40px; border-radius:20px; max-width:700px; width:90%; box-shadow:0 20px 40px rgba(0,0,0,0.2);}
+h1 { text-align:center; margin-bottom:20px; }
+.question { background:#f8f9fa; color:#333; padding:20px; border-radius:10px; margin-bottom:15px; border-left:5px solid #667eea;}
+.options { display:grid; gap:10px; }
+.option { padding:15px; border-radius:10px; background:#fff; border:2px solid #e0e0e0; cursor:pointer; transition:0.3s;}
+.option:hover { border-color:#667eea; transform:translateY(-2px);}
+.option.correct { border-color:#4CAF50; background:#d4edda;}
+.option.incorrect { border-color:#f44336; background:#f8d7da;}
+.feedback { margin-top:10px; font-weight:bold;}
+.btn { margin-top:20px; padding:12px 25px; border:none; border-radius:50px; background:linear-gradient(45deg,#667eea,#764ba2); color:white; cursor:pointer; font-weight:bold; }
+.btn:disabled { opacity:0.5; cursor:not-allowed; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>Test Your Kite AI Knowledge</h1>
+
+<div id="quiz">
+  <div id="question-container">
+    <div class="question" id="question-text"></div>
+    <div class="options" id="options-container"></div>
+    <div class="feedback" id="feedback"></div>
+    <button class="btn" id="next-btn" onclick="nextQuestion()" disabled>Next Question</button>
+  </div>
+  <div id="result" style="display:none; text-align:center;">
+    <h2>Your Score: <span id="score"></span> / <span id="total"></span></h2>
+    <button class="btn" onclick="restartQuiz()">Try Again</button>
+  </div>
+</div>
+
+<script>
+const quizData = [
+  {
+    question: "What is Kite AI primarily built for?",
+    options: ["Social Media Automation","E-commerce Tracking","AI & Agentic Internet","Gaming Bots"],
+    correct: 2
+  },
+  {
+    question: "Which blockchain is Kite AI compatible with?",
+    options: ["Bitcoin","EVM-compatible","Solana","Polkadot"],
+    correct: 1
+  },
+  {
+    question: "What is the purpose of Agent Native Identity in Kite AI?",
+    options: ["Single sign-on & reputation","Faster mining","Token swapping","NFT minting"],
+    correct: 0
+  },
+  {
+    question: "What can AI Yield Agents in Kite do?",
+    options: ["Auto-hedge assets","Play music","Post on social media","Email automation"],
+    correct: 0
+  },
+  {
+    question: "What does PoAI stand for in Kite ecosystem?",
+    options: ["Proof of AI","Proof of Asset","Power of Automation","Protocol AI Integration"],
+    correct: 0
+  }
+];
+
+let currentQuestion = 0;
+let score = 0;
+
+function loadQuestion() {
+  const q = quizData[currentQuestion];
+  document.getElementById('question-text').textContent = q.question;
+  const optionsContainer = document.getElementById('options-container');
+  optionsContainer.innerHTML = '';
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('next-btn').disabled = true;
+
+  q.options.forEach((opt, index) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.textContent = opt;
+    div.onclick = () => selectOption(index, div);
+    optionsContainer.appendChild(div);
+  });
+}
+
+function selectOption(index, element) {
+  const q = quizData[currentQuestion];
+  const options = document.querySelectorAll('.option');
+  
+  options.forEach(opt => opt.style.pointerEvents = 'none');
+
+  if(index === q.correct){
+    element.classList.add('correct');
+    document.getElementById('feedback').textContent = "🎉 Correct!";
+    score++;
+  } else {
+    element.classList.add('incorrect');
+    options[q.correct].classList.add('correct');
+    document.getElementById('feedback').textContent = `❌ Wrong! Correct answer: ${q.options[q.correct]}`;
+  }
+
+  document.getElementById('next-btn').disabled = false;
+}
+
+function nextQuestion(){
+  currentQuestion++;
+  if(currentQuestion >= quizData.length){
+    showResult();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showResult(){
+  document.getElementById('question-container').style.display = 'none';
+  document.getElementById('result').style.display = 'block';
+  document.getElementById('score').textContent = score;
+  document.getElementById('total').textContent = quizData.length;
+}
+
+function restartQuiz(){
+  currentQuestion = 0;
+  score = 0;
+  document.getElementById('question-container').style.display = 'block';
+  document.getElementById('result').style.display = 'none';
+  loadQuestion();
+}
+
+loadQuestion();
+</script>
+</body>
+</html>
